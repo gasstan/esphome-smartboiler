@@ -1,6 +1,6 @@
 #include "smartboiler.h"
 #include "esphome/core/application.h"
-#include "components/md5/md5.h"
+#include "md5.h"
 
 #define UUID_LENGTH 6
 
