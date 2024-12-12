@@ -1,6 +1,6 @@
 #include "smartboiler.h"
 #include "esphome/core/application.h"
-#include <openssl/md5.h>
+#include "MD5Builder.h>
 
 #define UUID_LENGTH 6
 
@@ -414,8 +414,8 @@ void SmartBoiler::process_command_queue_() {
  */
 std::string SmartBoiler::generateUUID() {
   char sbuf[16];
-  md5::MD5Digest md5{};
-  md5.init();
+  
+  md5.begin();
   sprintf(sbuf, "%08X", random_uint32());
   md5.add(sbuf, 8);
   md5.calculate();
