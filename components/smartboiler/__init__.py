@@ -42,7 +42,7 @@ CONFIG_SCHEMA = cv.polling_component_schema('600s').extend({
     cv.Optional(CONF_TEMP2): sensor.sensor_schema(unit_of_measurement=UNIT_CELSIUS, icon=ICON_THERMOMETER, accuracy_decimals=1).extend(),
     cv.Optional(CONF_HDO_LOW_TARIFF, {"name": "HDO"}): binary_sensor.binary_sensor_schema().extend(),
     cv.Optional(CONF_HEAT_ON, {"name":"Heating", "icon": "mdi:radiator"}): binary_sensor.binary_sensor_schema().extend(),
-    cv.Optional(CONF_MODE): select.select_schema(select.Select).extend({
+    cv.Optional(CONF_MODE): select.select_schema_base(select.Select).extend({
         cv.GenerateID(): cv.declare_id(SmartBoilerModeSelect),
     }),
     cv.Optional(CONF_THERMOSTAT): climate.climate_schema(climate.Climate).extend({
