@@ -1,6 +1,6 @@
 #include "smartboiler.h"
 #include "esphome/core/application.h"
-#include "esphome/core/helpers.h"
+#include "mbedtls/md5.h"
 
 #define UUID_LENGTH 6
 
@@ -413,16 +413,16 @@ void SmartBoiler::process_command_queue_() {
  * Generate random UUID for this device.
  */
 std::string SmartBoiler::generateUUID() {
-  char sbuf[16];
-  md5::MD5Digest md5{};
-  md5.init();
-  sprintf(sbuf, "%08X", random_uint32());
-  md5.add(sbuf, 8);
-  md5.calculate();
-  md5.get_hex(sbuf);
-  ESP_LOGV(TAG, "Auth: Nonce is %s", sbuf);
-  std::string s(sbuf);
-  return s.substr(0, 6);
+  nsigned char digest[16];
+mbedtls_md5((unsigned char*)sbuf, 8, digest);
+
+char hexout[33];
+for (int i = 0; i < 16; i++)
+  sprintf(hexout + i*2, "%02x", digest[i]);
+hexout[32] = 0;
+
+std::string s(hexout);
+return s.substr(0, 6);
 }
 
 void SmartBoiler::send_pin(uint32_t pin) {
