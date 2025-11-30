@@ -362,8 +362,8 @@ esphome::climate::ClimateTraits SmartBoilerThermostat::traits() {
   rv.set_visual_min_temperature(MIN_TEMP);
   rv.set_visual_max_temperature(MAX_TEMP);
   rv.set_visual_temperature_step(1);
-  rv.add_supported_custom_feature(esphome::climate::CLIMATE_SUPPORTS_CURRENT_TEMPERATURE);
-  rv.add_supported_custom_feature(esphome::climate::CLIMATE_SUPPORTS_ACTION);
+  rv.set_supports_current_temperature(true);
+  rv.set_supports_action(true);
   rv.set_supported_modes({climate::CLIMATE_MODE_OFF, climate::CLIMATE_MODE_HEAT});
 
   return rv;
