@@ -362,8 +362,8 @@ esphome::climate::ClimateTraits SmartBoilerThermostat::traits() {
   rv.set_visual_min_temperature(MIN_TEMP);
   rv.set_visual_max_temperature(MAX_TEMP);
   rv.set_visual_temperature_step(1);
-  rv.add_supported_feature(esphome::climate::CLIMATE_FEATURE_CURRENT_TEMPERATURE);
-  rv.add_supported_feature(esphome::climate::CLIMATE_FEATURE_ACTION);
+  rv.add_supported_custom_feature(esphome::climate::CLIMATE_SUPPORTS_CURRENT_TEMPERATURE);
+  rv.add_supported_custom_feature(esphome::climate::CLIMATE_SUPPORTS_ACTION);
   rv.set_supported_modes({climate::CLIMATE_MODE_OFF, climate::CLIMATE_MODE_HEAT});
 
   return rv;
@@ -380,7 +380,7 @@ void SmartBoilerThermostat::publish_current_temp(float temp) {
 }
 
 void SmartBoilerThermostat::publish_action(bool heating) {
-  if (get_parent()->mode_select_->current_option == "STOP")
+  if (get_parent()->mode_select_->current_option() == "STOP")
     this->action = esphome::climate::CLIMATE_ACTION_OFF;
   else if (heating)
     this->action = esphome::climate::CLIMATE_ACTION_HEATING;
@@ -415,7 +415,7 @@ void SmartBoiler::process_command_queue_() {
 std::string SmartBoiler::generateUUID() {
   uint8_t raw[8];
   for (int i = 0; i < 8; i++) {
-    raw[i] = random(256);
+    raw[i] = esphome::random_uint32() & 0xFF;
   }
   
   unsigned char digest[16];
