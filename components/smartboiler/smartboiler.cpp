@@ -362,8 +362,8 @@ esphome::climate::ClimateTraits SmartBoilerThermostat::traits() {
   rv.set_visual_min_temperature(MIN_TEMP);
   rv.set_visual_max_temperature(MAX_TEMP);
   rv.set_visual_temperature_step(1);
-  rv.set_supports_current_temperature(true);
-  rv.set_supports_action(true);
+  rv.add_supported_feature(esphome::climate::CLIMATE_FEATURE_CURRENT_TEMPERATURE);
+  rv.add_supported_feature(esphome::climate::CLIMATE_FEATURE_ACTION);
   rv.set_supported_modes({climate::CLIMATE_MODE_OFF, climate::CLIMATE_MODE_HEAT});
 
   return rv;
@@ -380,7 +380,7 @@ void SmartBoilerThermostat::publish_current_temp(float temp) {
 }
 
 void SmartBoilerThermostat::publish_action(bool heating) {
-  if (get_parent()->mode_select_->state == "STOP")
+  if (get_parent()->mode_select_->current_option == "STOP")
     this->action = esphome::climate::CLIMATE_ACTION_OFF;
   else if (heating)
     this->action = esphome::climate::CLIMATE_ACTION_HEATING;
@@ -413,16 +413,21 @@ void SmartBoiler::process_command_queue_() {
  * Generate random UUID for this device.
  */
 std::string SmartBoiler::generateUUID() {
-  nsigned char digest[16];
-mbedtls_md5((unsigned char*)sbuf, 8, digest);
+  uint8_t raw[8];
+  for (int i = 0; i < 8; i++) {
+    raw[i] = random(256);
+  }
+  
+  unsigned char digest[16];
+  mbedtls_md5((unsigned char*)raw, 8, digest);
 
-char hexout[33];
-for (int i = 0; i < 16; i++)
-  sprintf(hexout + i*2, "%02x", digest[i]);
-hexout[32] = 0;
+  char hexout[33];
+  for (int i = 0; i < 16; i++)
+    sprintf(hexout + i*2, "%02x", digest[i]);
+  hexout[32] = 0;
 
-std::string s(hexout);
-return s.substr(0, 6);
+  std::string s(hexout);
+  return s.substr(0, 6);
 }
 
 void SmartBoiler::send_pin(uint32_t pin) {
